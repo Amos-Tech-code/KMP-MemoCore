@@ -28,10 +28,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amos_tech_code.kmp_memocore.data.db.NoteDatabase
 import com.amos_tech_code.kmp_memocore.listItemScreen.ListNotesScreen
 import com.amos_tech_code.kmp_memocore.model.Note
 import com.amos_tech_code.kmp_memocore.ui.theme.QuickNotesAppTheme
@@ -41,11 +44,13 @@ import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
-fun App() {
+fun App(
+    database: NoteDatabase
+) {
     QuickNotesAppTheme {
 
-        val viewModel = viewModel { HomeViewModel() }
+        val viewModel = viewModel { HomeViewModel(database) }
+        val notes by viewModel.notes.collectAsStateWithLifecycle()
         val bottomSheetState = rememberModalBottomSheetState()
         var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -65,14 +70,16 @@ fun App() {
             ) {
                 Text(
                     text = "Notes",
-                    style = MaterialTheme.typography.headlineLarge,
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
                     modifier = Modifier.fillMaxWidth().padding(16.dp)
                 )
 
-                if (viewModel.notes.value.isEmpty()) {
+                if (notes.isEmpty()) {
                     EmptyView()
                 } else {
-                    ListNotesScreen(viewModel.notes.value)
+                    ListNotesScreen(notes)
                 }
             }
 
