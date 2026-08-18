@@ -1,10 +1,38 @@
 package com.amos_tech_code.kmp_memocore.feature.auth
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.amos_tech_code.kmp_memocore.data.remote.ApiService
+import com.amos_tech_code.kmp_memocore.data.remote.HttpClientFactory
+import com.amos_tech_code.kmp_memocore.model.AuthRequest
+import com.amos_tech_code.kmp_memocore.model.AuthResponse
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class SignUpViewModel : ViewModel() {
+
+    private val apiService: ApiService = ApiService(HttpClientFactory.getHttpClient())
+
+    private val _uiState = MutableStateFlow<AuthState>(AuthState.Idle)
+    val uiState = _uiState.asStateFlow()
+
+    private val _navigationFlow = MutableSharedFlow<AuthNavigation>()
+    val navigationFlow = _navigationFlow.asSharedFlow()
+
+    fun onErrorClick() {
+        viewModelScope.launch {
+            _uiState.value = AuthState.Idle
+        }
+    }
+
+    fun onSuccessClick(email: String) {
+        viewModelScope.launch {
+            _navigationFlow.emit(AuthNavigation.NavigateToHome(email))
+        }
+    }
 
     private val _email = MutableStateFlow("")
     val email = _email.asStateFlow()
@@ -28,9 +56,30 @@ class SignUpViewModel : ViewModel() {
     }
 
     fun signUp() {
-        // Implement your sign-up logic here
+        viewModelScope.launch {
+            val request = AuthRequest(email.value, password.value)
+            _uiState.value = AuthState.Loading
 
+            apiService.signup(request).onSuccess {
+                _uiState.value = AuthState.Success(it)
+            }.onFailure {
+                _uiState.value = AuthState.Error(it.message ?: "Something went wrong")
+            }
+        }
     }
 
+
+}
+
+sealed class AuthState {
+    object Idle : AuthState()
+    object Loading : AuthState()
+    data class Success(val response: AuthResponse) : AuthState()
+    data class Error(val message: String) : AuthState()
+}
+
+
+sealed class AuthNavigation {
+    data class NavigateToHome(val email: String) : AuthNavigation()
 
 }

@@ -1,4 +1,4 @@
-package com.amos_tech_code.kmp_memocore.listItemScreen
+package com.amos_tech_code.kmp_memocore.feature.listItemScreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
