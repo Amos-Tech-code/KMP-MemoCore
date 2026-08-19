@@ -17,7 +17,7 @@ class SignUpViewModel(
     private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
-    private val apiService: ApiService = ApiService(HttpClientFactory.getHttpClient())
+    private val apiService: ApiService = ApiService(HttpClientFactory.getHttpClient(), dataStoreManager)
 
     private val _uiState = MutableStateFlow<AuthState>(AuthState.Idle)
     val uiState = _uiState.asStateFlow()

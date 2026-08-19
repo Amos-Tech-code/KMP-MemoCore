@@ -59,17 +59,16 @@ fun ListNotesScreenPreview() {
         Note(
             title = "This is the first note that i want to show to the users.",
             description = "Description",
-            //userId = 1.toString()
+            userId = 1.toString()
         ), Note(
             title = "This is the first note that i want to show to the users.",
             description = "Description",
-            //userId = 1.toString()
+            userId = 1.toString()
         ), Note(
             title = "This is the first note that i want to show to the users.",
             description = "Description",
-            //userId = 1.toString()
+            userId = 1.toString()
         ),
-        Note("Title 4", "Description 4"),
     )
 
     ListNotesScreen(list)

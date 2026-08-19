@@ -43,8 +43,8 @@ import com.amos_tech_code.kmp_memocore.feature.listItemScreen.ListNotesScreen
 import com.amos_tech_code.kmp_memocore.model.Note
 import kmpmemocore.shared.generated.resources.Res
 import kmpmemocore.shared.generated.resources.ic_rafiki
+import kmpmemocore.shared.generated.resources.ic_sync
 import kmpmemocore.shared.generated.resources.ic_user
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
@@ -64,8 +64,11 @@ fun HomeScreen(
     var showBottomSheet by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val email = remember { mutableStateOf("") }
+    val userId = remember { mutableStateOf("") }
+
     LaunchedEffect(true) {
         email.value = dataStoreManager.getEmail() ?: ""
+        userId.value = dataStoreManager.getUserId() ?: ""
     }
 
     Scaffold(
@@ -77,9 +80,9 @@ fun HomeScreen(
                 Text(text = "+", fontSize = 18.sp)
             }
         }
-    ) {
+    ) { innerPadding ->
         Column(
-            modifier = Modifier.padding(it)
+            modifier = Modifier.padding(innerPadding)
         ) {
 
             Box(modifier = Modifier.fillMaxWidth()) {
@@ -113,6 +116,20 @@ fun HomeScreen(
                                 }
                             }
                     )
+
+                    if(email.value.isNotEmpty()) {
+                        Image(
+                            painterResource(Res.drawable.ic_sync),
+                            null,
+                            modifier = Modifier
+                                .padding(end = 16.dp).size(48.dp).padding(4.dp)
+                                .clickable {
+                                    coroutineScope.launch {
+                                        viewModel.performSync()
+                                    }
+                                }
+                        )
+                    }
                 }
 
             }
@@ -131,6 +148,7 @@ fun HomeScreen(
             ) {
                 // Bottom sheet content
                 AddItemDialog(
+                    userId = userId.value,
                     onCancel = { showBottomSheet = false },
                     onSave = {
                         viewModel.addNote(it)
@@ -146,6 +164,7 @@ fun HomeScreen(
 
 @Composable
 fun AddItemDialog(
+    userId: String,
     onCancel: () -> Unit,
     onSave: (Note) -> Unit
 ) {
@@ -193,9 +212,12 @@ fun AddItemDialog(
                 modifier = Modifier
                     .padding(8.dp)
                     .clickable {
-                        onSave(Note(
+                        onSave(
+                            Note(
                             title = title,
-                            description = description
+                            description = description,
+                            userId = userId,
+                            isDirty = true
                         ))
                     }
             )

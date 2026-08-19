@@ -5,12 +5,11 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import com.amos_tech_code.kmp_memocore.data.NoteEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 
 @Database(
-    entities = [NoteEntity::class],
+    entities = [NoteEntity::class, SyncMetaDataEntity::class],
     version = 1,
     exportSchema = true
 )
@@ -18,6 +17,8 @@ import kotlinx.coroutines.IO
 abstract class NoteDatabase : RoomDatabase() {
 
     abstract fun noteDao(): NoteDao
+
+    abstract fun syncDataDao(): SyncDataDao
 
 }
 

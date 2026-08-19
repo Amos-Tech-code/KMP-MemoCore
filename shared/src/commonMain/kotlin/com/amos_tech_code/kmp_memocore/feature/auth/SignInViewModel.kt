@@ -22,7 +22,7 @@ class SignInViewModel(
     private val _password = MutableStateFlow("")
     val password = _password.asStateFlow()
 
-    private val apiService = ApiService(HttpClientFactory.getHttpClient())
+    private val apiService = ApiService(HttpClientFactory.getHttpClient(), dataStoreManager)
     private val _uiState = MutableStateFlow<AuthState>(AuthState.Idle)
     val uiState = _uiState.asStateFlow()
 
