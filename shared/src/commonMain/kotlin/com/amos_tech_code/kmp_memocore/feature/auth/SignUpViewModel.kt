@@ -2,6 +2,7 @@ package com.amos_tech_code.kmp_memocore.feature.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amos_tech_code.kmp_memocore.data.cache.DataStoreManager
 import com.amos_tech_code.kmp_memocore.data.remote.ApiService
 import com.amos_tech_code.kmp_memocore.data.remote.HttpClientFactory
 import com.amos_tech_code.kmp_memocore.model.AuthRequest
@@ -12,7 +13,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class SignUpViewModel : ViewModel() {
+class SignUpViewModel(
+    private val dataStoreManager: DataStoreManager
+) : ViewModel() {
 
     private val apiService: ApiService = ApiService(HttpClientFactory.getHttpClient())
 
@@ -61,7 +64,14 @@ class SignUpViewModel : ViewModel() {
             _uiState.value = AuthState.Loading
 
             apiService.signup(request).onSuccess {
+
                 _uiState.value = AuthState.Success(it)
+
+                dataStoreManager.storeToken(it.accessToken)
+                dataStoreManager.storeEmail(it.email)
+                dataStoreManager.storeRefreshToken(it.refreshToken)
+                dataStoreManager.storeUserId(it.userId)
+
             }.onFailure {
                 _uiState.value = AuthState.Error(it.message ?: "Something went wrong")
             }

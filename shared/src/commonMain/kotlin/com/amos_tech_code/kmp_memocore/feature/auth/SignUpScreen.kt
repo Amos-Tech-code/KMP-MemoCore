@@ -22,14 +22,16 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.amos_tech_code.kmp_memocore.data.cache.DataStoreManager
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun SignUpScreen(
     navController: NavController,
+    dataStoreManager: DataStoreManager
 ) {
 
-    val viewModel = viewModel { SignUpViewModel() }
+    val viewModel = viewModel { SignUpViewModel(dataStoreManager) }
     val email by viewModel.email.collectAsStateWithLifecycle()
     val password by viewModel.password.collectAsStateWithLifecycle()
     val confirmPassword by viewModel.confirmPassword.collectAsStateWithLifecycle()

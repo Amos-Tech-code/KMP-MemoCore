@@ -21,12 +21,16 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.amos_tech_code.kmp_memocore.data.cache.DataStoreManager
 import kotlinx.coroutines.flow.collectLatest
 
 
 @Composable
-fun SignInScreen(navController: NavController) {
-    val viewModel = viewModel { SignInViewModel() }
+fun SignInScreen(
+    navController: NavController,
+    dataStoreManager: DataStoreManager
+) {
+    val viewModel = viewModel { SignInViewModel(dataStoreManager) }
 
     val email = viewModel.email.collectAsStateWithLifecycle()
     val pass = viewModel.password.collectAsStateWithLifecycle()
@@ -94,7 +98,7 @@ fun SignInScreen(navController: NavController) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 )
                 {
-                    Text("Sign Up", fontSize = 22.sp)
+                    Text("Sign In", fontSize = 22.sp)
                     Spacer(modifier = Modifier.size(16.dp))
                     OutlinedTextField(
                         email.value, onValueChange = {
