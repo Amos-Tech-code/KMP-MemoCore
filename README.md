@@ -19,6 +19,17 @@ Use the run configurations provided by the run widget in your IDE's toolbar. You
 - Android app: `./gradlew :androidApp:assembleDebug`
 - iOS app: open the [/iosApp](./iosApp) directory in Xcode and run it from there.
 
+### iOS Preview on Windows
+
+Since building iOS apps requires macOS, this project includes a GitHub Actions workflow to build and preview the iOS app:
+
+1.  **GitHub Actions**: Pushing to `main` or `master` triggers a build of the iOS simulator app.
+2.  **Appetize.io**: To see a live preview in your browser:
+    *   Create an account at [appetize.io](https://appetize.io).
+    *   Generate an **API Token** in your Appetize settings.
+    *   Add this token to your GitHub repository as a secret named `APPETIZE_API_TOKEN`.
+    *   The workflow will automatically upload the build and provide a preview link in the Action logs.
+
 ### Running tests
 
 Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:

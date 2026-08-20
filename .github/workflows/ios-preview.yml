@@ -1,0 +1,63 @@
+name: iOS Preview (Appetize.io)
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-preview:
+    runs-on: macos-14
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Grant execution permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build iOS App for Simulator
+        run: |
+          xcodebuild -project iosApp/iosApp.xcodeproj \
+            -scheme iosApp \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            -derivedDataPath xcode-build \
+            build
+
+      - name: Zip .app for Appetize.io
+        run: |
+          cd xcode-build/Build/Products/Debug-iphonesimulator
+          zip -r ../../../KMPMemoCore.zip KMPMemoCore.app
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-simulator-build
+          path: KMPMemoCore.zip
+
+      - name: Upload to Appetize.io
+        if: github.event_name == 'push' && success()
+        env:
+          APPETIZE_API_TOKEN: ${{ secrets.APPETIZE_API_TOKEN }}
+        run: |
+          if [ -z "$APPETIZE_API_TOKEN" ]; then
+            echo "APPETIZE_API_TOKEN is not set. Skipping upload to Appetize.io."
+            echo "To enable this, add APPETIZE_API_TOKEN to your GitHub repository secrets."
+          else
+            echo "Uploading to Appetize.io..."
+            RESPONSE=$(curl -s https://$APPETIZE_API_TOKEN@api.appetize.io/v1/apps \
+              -F "file=@KMPMemoCore.zip" \
+              -F "platform=ios")
+            echo "Appetize.io response: $RESPONSE"
+            APP_URL=$(echo $RESPONSE | grep -o 'https://appetize.io/app/[^"]*')
+            echo "Preview your app at: $APP_URL"
+          fi
