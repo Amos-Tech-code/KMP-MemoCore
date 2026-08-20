@@ -28,12 +28,15 @@ jobs:
 
       - name: Build iOS App for Simulator
         run: |
+          ./gradlew clean
           xcodebuild -project iosApp/iosApp.xcodeproj \
             -scheme iosApp \
             -configuration Debug \
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 16' \
             -derivedDataPath xcode-build \
+            IPHONEOS_DEPLOYMENT_TARGET=18.5 \
+            OTHER_LDFLAGS='$(inherited) -Xlinker -undefined -Xlinker dynamic_lookup' \
             build
 
       - name: Zip .app for Appetize.io
