@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-preview:
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,14 +23,20 @@ jobs:
       - name: Grant execution permission for gradlew
         run: chmod +x gradlew
 
+      - name: Verify Xcode Version
+        run: xcodebuild -version
+
       - name: Build iOS App for Simulator
         run: |
+          ./gradlew clean
           xcodebuild -project iosApp/iosApp.xcodeproj \
             -scheme iosApp \
             -configuration Debug \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
             -derivedDataPath xcode-build \
+            IPHONEOS_DEPLOYMENT_TARGET=18.5 \
+            OTHER_LDFLAGS='$(inherited) -Xlinker -undefined -Xlinker dynamic_lookup' \
             build
 
       - name: Zip .app for Appetize.io
