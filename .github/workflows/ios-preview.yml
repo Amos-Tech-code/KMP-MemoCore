@@ -42,8 +42,8 @@ jobs:
       - name: Zip .app for Appetize.io
         run: |
           cd xcode-build/Build/Products/Debug-iphonesimulator
-          zip -r ../../../KMPMemoCore.zip KMPMemoCore.app
-          cd ../../..
+          zip -r "$GITHUB_WORKSPACE/KMPMemoCore.zip" KMPMemoCore.app
+          cd "$GITHUB_WORKSPACE"
           ls -lh KMPMemoCore.zip
 
       - name: Upload Build Artifact
