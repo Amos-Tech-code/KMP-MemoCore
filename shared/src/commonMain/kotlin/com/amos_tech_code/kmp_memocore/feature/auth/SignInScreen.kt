@@ -1,6 +1,7 @@
 package com.amos_tech_code.kmp_memocore.feature.auth
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -52,91 +54,97 @@ fun SignInScreen(
         }
     }
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        when (uiState.value) {
-            is AuthState.Loading -> {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    CircularProgressIndicator()
-                    Text("Loading...")
-                }
-            }
-
-            is AuthState.Error -> {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text("Error: ${(uiState.value as AuthState.Error).message}")
-                    Button(onClick = { viewModel.onErrorClick() }) {
-                        Text("Retry")
+    Scaffold(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .padding(it)
+                .padding(16.dp)
+        ) {
+            when (uiState.value) {
+                is AuthState.Loading -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator()
+                        Text("Loading...")
                     }
                 }
-            }
 
-            is AuthState.Success -> {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    val email = (uiState.value as AuthState.Success).response.email
-                    Text("Successful: ${email}")
-                    Button(onClick = { viewModel.onSuccessClick(email) }) {
-                        Text("Go Back")
+                is AuthState.Error -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text("Error: ${(uiState.value as AuthState.Error).message}")
+                        Button(onClick = { viewModel.onErrorClick() }) {
+                            Text("Retry")
+                        }
                     }
                 }
-            }
 
-            is AuthState.Idle -> {
-                Column(
-                    modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                )
-                {
-                    Text("Sign In", fontSize = 22.sp)
-                    Spacer(modifier = Modifier.size(16.dp))
-                    OutlinedTextField(
-                        email.value, onValueChange = {
-                            viewModel.onEmailUpdated(it)
-                        }, modifier = Modifier.fillMaxWidth(),
-                        placeholder = {
-                            Text("Email")
-                        },
-                        label = {
-                            Text("Email")
-                        })
-
-                    Spacer(modifier = Modifier.size(16.dp))
-
-                    OutlinedTextField(
-                        pass.value, onValueChange = {
-                            viewModel.onPasswordUpdated(it)
-                        }, modifier = Modifier.fillMaxWidth(),
-                        placeholder = {
-                            Text("Password")
-                        },
-                        label = {
-                            Text("Password")
-                        })
-
-                    Spacer(modifier = Modifier.size(16.dp))
-
-                    TextButton({
-                        navController.popBackStack()
-                    }) {
-                        Text("Don't have an account? Signup")
+                is AuthState.Success -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        val email = (uiState.value as AuthState.Success).response.email
+                        Text("Successful: ${email}")
+                        Button(onClick = { viewModel.onSuccessClick(email) }) {
+                            Text("Go Back")
+                        }
                     }
-                    Spacer(modifier = Modifier.size(16.dp))
+                }
 
-                    Button({ viewModel.signIn() }, modifier = Modifier.fillMaxWidth()) {
-                        Text("Submit")
+                is AuthState.Idle -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    )
+                    {
+                        Text("Sign In", fontSize = 22.sp)
+                        Spacer(modifier = Modifier.size(16.dp))
+                        OutlinedTextField(
+                            email.value, onValueChange = {
+                                viewModel.onEmailUpdated(it)
+                            }, modifier = Modifier.fillMaxWidth(),
+                            placeholder = {
+                                Text("Email")
+                            },
+                            label = {
+                                Text("Email")
+                            })
+
+                        Spacer(modifier = Modifier.size(16.dp))
+
+                        OutlinedTextField(
+                            pass.value, onValueChange = {
+                                viewModel.onPasswordUpdated(it)
+                            }, modifier = Modifier.fillMaxWidth(),
+                            placeholder = {
+                                Text("Password")
+                            },
+                            label = {
+                                Text("Password")
+                            })
+
+                        Spacer(modifier = Modifier.size(16.dp))
+
+                        TextButton({
+                            navController.popBackStack()
+                        }) {
+                            Text("Don't have an account? Signup")
+                        }
+                        Spacer(modifier = Modifier.size(16.dp))
+
+                        Button({ viewModel.signIn() }, modifier = Modifier.fillMaxWidth()) {
+                            Text("Submit")
+                        }
+
                     }
-
                 }
             }
         }

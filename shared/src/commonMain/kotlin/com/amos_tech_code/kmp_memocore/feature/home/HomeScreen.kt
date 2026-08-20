@@ -137,7 +137,12 @@ fun HomeScreen(
             if (notes.isEmpty()) {
                 EmptyView()
             } else {
-                ListNotesScreen(notes)
+                ListNotesScreen(
+                    list = notes,
+                    onDelete = {
+                        viewModel.deleteNote(it)
+                    }
+                )
             }
         }
 

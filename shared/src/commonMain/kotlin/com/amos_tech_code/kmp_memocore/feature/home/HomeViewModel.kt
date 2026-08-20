@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlin.time.Clock
 
 class HomeViewModel(
     private val noteDatabase: NoteDatabase,
@@ -43,6 +44,14 @@ class HomeViewModel(
     fun addNote(note: Note) {
         viewModelScope.launch {
             dao.insertNote(note.toEntity())
+            // Perform sync
+            performSync()
+        }
+    }
+
+    fun deleteNote(note: Note) {
+        viewModelScope.launch {
+            dao.softDeleteNote(note.id, Clock.System.now().toString())
             // Perform sync
             performSync()
         }
