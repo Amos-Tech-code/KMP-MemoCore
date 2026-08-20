@@ -11,13 +11,16 @@ import com.amos_tech_code.kmp_memocore.feature.auth.SignInScreen
 import com.amos_tech_code.kmp_memocore.feature.auth.SignUpScreen
 import com.amos_tech_code.kmp_memocore.feature.home.HomeScreen
 import com.amos_tech_code.kmp_memocore.feature.profile.UserProfileScreen
+import com.amos_tech_code.kmp_memocore.feature.settings.SettingsScreen
 import com.amos_tech_code.kmp_memocore.ui.theme.QuickNotesAppTheme
+import com.amos_tech_code.kmp_memocore.utils.UrlUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(
     database: NoteDatabase,
-    dataStoreManager: DataStoreManager
+    dataStoreManager: DataStoreManager,
+    urlUtils: UrlUtils
 ) {
     QuickNotesAppTheme {
 
@@ -42,6 +45,10 @@ fun App(
 
             composable("profile") {
                 UserProfileScreen(dataStoreManager)
+            }
+
+            composable("settings") {
+                SettingsScreen(navController, urlUtils)
             }
 
         }

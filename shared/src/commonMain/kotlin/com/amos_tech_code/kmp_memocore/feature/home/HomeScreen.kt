@@ -30,8 +30,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -43,6 +45,7 @@ import com.amos_tech_code.kmp_memocore.feature.listItemScreen.ListNotesScreen
 import com.amos_tech_code.kmp_memocore.model.Note
 import kmpmemocore.shared.generated.resources.Res
 import kmpmemocore.shared.generated.resources.ic_rafiki
+import kmpmemocore.shared.generated.resources.ic_settings
 import kmpmemocore.shared.generated.resources.ic_sync
 import kmpmemocore.shared.generated.resources.ic_user
 import kotlinx.coroutines.launch
@@ -97,9 +100,6 @@ fun HomeScreen(
                     modifier = Modifier.align(Alignment.CenterEnd),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    email?.value?.let {
-                        Text(it)
-                    }
                     Image(
                         painter = painterResource(Res.drawable.ic_user),
                         null,
@@ -115,6 +115,16 @@ fun HomeScreen(
                                     }
                                 }
                             }
+                    )
+                    Image(
+                        painterResource(Res.drawable.ic_settings),
+                        null,
+                        modifier = Modifier.padding(end = 16.dp).size(48.dp).padding(4.dp)
+                            .clickable {
+                                navController.navigate("settings")
+
+                            },
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
                     )
 
                     if(email.value.isNotEmpty()) {

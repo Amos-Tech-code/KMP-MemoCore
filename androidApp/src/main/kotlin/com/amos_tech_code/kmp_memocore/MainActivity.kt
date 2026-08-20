@@ -9,6 +9,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.amos_tech_code.kmp_memocore.data.cache.DataStoreManager
 import com.amos_tech_code.kmp_memocore.data.db.getNoteDatabase
+import com.amos_tech_code.kmp_memocore.utils.AndroidUrlUtils
+import com.amos_tech_code.kmp_memocore.utils.UrlUtils
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,7 +20,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             App(
                 database = getNoteDatabase(getDatabaseBuilder(this@MainActivity)),
-                dataStoreManager = DataStoreManager(createDataStore(this@MainActivity))
+                dataStoreManager = DataStoreManager(createDataStore(this@MainActivity)),
+                urlUtils = AndroidUrlUtils(this@MainActivity)
             )
         }
     }
@@ -29,5 +32,9 @@ class MainActivity : ComponentActivity() {
 fun AppAndroidPreview() {
     val database = getNoteDatabase(getDatabaseBuilder(LocalContext.current))
     val dataStoreManager = DataStoreManager(createDataStore(LocalContext.current))
-    App(database, dataStoreManager)
+    App(
+        database,
+        dataStoreManager,
+        AndroidUrlUtils(LocalContext.current)
+    )
 }
